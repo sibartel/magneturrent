@@ -1,6 +1,7 @@
 //*****************************************************************************
 //
-// blinky.c - Simple example to blink the on-board LED.
+// uart_echo.c - Example for reading data from and writing data to the UART in
+//               an interrupt driven fashion.
 //
 // Copyright (c) 2011-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
@@ -24,17 +25,24 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/debug.h"
+#include "driverlib/fpu.h"
 #include "driverlib/gpio.h"
+#include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/uart.h"
 
 //*****************************************************************************
 //
 //! \addtogroup example_list
-//! <h1>Blinky (blinky)</h1>
+//! <h1>UART Echo (uart_echo)</h1>
 //!
-//! A very simple example that blinks the on-board LED.
+//! This example application utilizes the UART to echo text.  The first UART
+//! (connected to the USB debug virtual serial port on the evaluation board)
+//! will be configured in 115,200 baud, 8-n-1 mode.  All characters received on
+//! the UART are transmitted back to the UART.
 //
 //*****************************************************************************
 
@@ -47,41 +55,123 @@
 void
 __error__(char *pcFilename, uint32_t ui32Line)
 {
-    while(1);
 }
 #endif
 
 //*****************************************************************************
 //
-// Blink the on-board LED.
+// The UART interrupt handler.
+//
+//*****************************************************************************
+void
+UARTIntHandler(void)
+{
+    uint32_t ui32Status;
+
+    //
+    // Get the interrrupt status.
+    //
+    ui32Status = UARTIntStatus(UART0_BASE, true);
+
+    //
+    // Clear the asserted interrupts.
+    //
+    UARTIntClear(UART0_BASE, ui32Status);
+
+    //
+    // Loop while there are characters in the receive FIFO.
+    //
+    while(UARTCharsAvail(UART0_BASE))
+    {
+        //
+        // Read the next character from the UART and write it back to the UART.
+        //
+        UARTCharPutNonBlocking(UART0_BASE,
+                                   UARTCharGetNonBlocking(UART0_BASE));
+    }
+}
+
+//*****************************************************************************
+//
+// Send a string to the UART.
+//
+//*****************************************************************************
+void
+UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
+{
+    //
+    // Loop while there are more characters to send.
+    //
+    while(ui32Count--)
+    {
+        //
+        // Write the next character to the UART.
+        //
+        UARTCharPutNonBlocking(UART0_BASE, *pui8Buffer++);
+    }
+}
+
+//*****************************************************************************
+//
+// This example demonstrates how to send a string of data to the UART.
 //
 //*****************************************************************************
 int
 main(void)
 {
-    volatile uint32_t ui32Loop;
+    //
+    // Enable lazy stacking for interrupt handlers.  This allows floating-point
+    // instructions to be used within interrupt handlers, but at the expense of
+    // extra stack usage.
+    //
+    FPULazyStackingEnable();
 
     //
-    // Enable the GPIO port that is used for the on-board LED.
+    // Set the clocking to run directly from the crystal.
     //
+    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN |
+                       SYSCTL_XTAL_16MHZ);
+
+    //
+    // Enable the peripherals used by this example.
+    //
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
 
     //
-    // Check if the peripheral access is enabled.
+    // Enable processor interrupts.
     //
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOG))
-    {
-    }
+    IntMasterEnable();
 
     //
-    // Enable the GPIO pin for the LED (PG2).  Set the direction as output, and
-    // enable the GPIO pin for digital function.
+    // Set GPIO A0 and A1 as UART pins.
     //
+    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     GPIOPinTypeGPIOOutput(GPIO_PORTG_BASE, GPIO_PIN_2);
 
     //
-    // Loop forever.
+    // Configure the UART for 115,200, 8-N-1 operation.
     //
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
+                            (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+                             UART_CONFIG_PAR_NONE));
+
+    //
+    // Enable the UART interrupt.
+    //
+    IntEnable(INT_UART0);
+    UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+
+    //
+    // Prompt for text to be entered.
+    //
+    UARTSend((uint8_t *)"Enter text: ", 12);
+
+    //
+    // Loop forever echoing data through the UART.
+    //
+    volatile uint32_t ui32Loop;
     while(1)
     {
         //
@@ -106,6 +196,6 @@ main(void)
         //
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++)
         {
-        }
+}
     }
 }
