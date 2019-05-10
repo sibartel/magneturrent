@@ -1,0 +1,40 @@
+[binaries]
+c       = 'arm-none-eabi-gcc'
+cpp     = 'arm-none-eabi-g++'
+ld      = 'arm-none-eabi-ld'
+ar      = 'arm-none-eabi-ar'
+as      = 'arm-none-eabi-as'
+size    = 'arm-none-eabi-size'
+objdump = 'arm-none-eabi-objdump'
+objcopy = 'arm-none-eabi-objcopy'
+strip   = 'arm-none-eabi-strip'
+
+[properties]
+c_args      = [
+               '-mthumb',                   # define language
+               '-mfpu=fpv4-sp-d16',
+               '-mfloat-abi=hard',
+               #------------------------------------
+               '-ffunction-sections',       # each function to a seperate section ==> Code-optimization / deletion
+               '-fdata-sections',           # each variable to a seperate section ==> Code-optimization / deletion
+               '-MD',
+               '-DPART_TM4C123GH6PGE',
+               '-fshort-enums',             # otherwise errors at linking...
+               '-fmessage-length=0',        # all error warnings in a single line (default 72)
+               '-fsigned-char',             # char is per default unsigned
+               '-march=armv7e-m',
+               '-Wall',
+               '-ffreestanding',
+               '-v', # option for more verbose output
+               ]
+
+c_link_args = [
+              '-v',                     # option for more verbose output
+              '-nostdlib',             # do not import the standard library's
+            ]
+
+[host_machine]
+system = 'none'
+cpu_family = 'arm'
+cpu = 'cortex-m4'
+endian = 'little'
