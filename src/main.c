@@ -34,6 +34,14 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
 
+#include "i2c.h"
+#include "lsm303dlhc.h"
+
+#include "inc/hw_i2c.h"
+#include "inc/hw_types.h"
+#include "driverlib/pin_map.h"
+#include "driverlib/i2c.h"
+
 //*****************************************************************************
 //
 //! \addtogroup example_list
@@ -81,14 +89,14 @@ UARTIntHandler(void)
     //
     // Loop while there are characters in the receive FIFO.
     //
-    while(UARTCharsAvail(UART0_BASE))
-    {
-        //
-        // Read the next character from the UART and write it back to the UART.
-        //
-        UARTCharPutNonBlocking(UART0_BASE,
-                                   UARTCharGetNonBlocking(UART0_BASE));
-    }
+//    while(UARTCharsAvail(UART0_BASE))
+//    {
+//        //
+//        // Read the next character from the UART and write it back to the UART.
+//        //
+//        UARTCharPutNonBlocking(UART0_BASE,
+//                                   UARTCharGetNonBlocking(UART0_BASE));
+//    }
 }
 
 //*****************************************************************************
@@ -107,8 +115,31 @@ UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
         //
         // Write the next character to the UART.
         //
-        UARTCharPutNonBlocking(UART0_BASE, *pui8Buffer++);
+        UARTCharPut(UART0_BASE, *pui8Buffer++);
     }
+}
+
+void PrintNInt(int16_t val, char *pointer, uint8_t n) {
+  uint16_t printedChars = 0;
+  uint8_t negative = 0;
+  if(val < 0) {
+    negative = 1;
+    val = -val;
+  }
+  while (printedChars < n) {
+    if (val == 0) {
+      if(negative) {
+        pointer[n - ++printedChars] = '-';
+        negative = 0;
+      } else {
+        pointer[n - ++printedChars] = ' ';
+      }
+    } else {
+      int lastDigit = val % 10;
+      pointer[n - ++printedChars] = (char) (lastDigit + '0');
+      val /= 10;
+    }
+  }
 }
 
 //*****************************************************************************
@@ -166,36 +197,31 @@ main(void)
     //
     // Prompt for text to be entered.
     //
-    UARTSend((uint8_t *)"Enter text: ", 12);
+    UARTSend((uint8_t *)"\n\rHi from your tivaboard.", 24);
 
-    //
-    // Loop forever echoing data through the UART.
-    //
-    volatile uint32_t ui32Loop;
-    while(1)
-    {
-        //
-        // Turn on the LED.
-        //
+    i2cDevice_t i2c2;
+    i2c_init(&i2c2);
+
+    lsm303dlhcSensor_t sensor;
+    lsm303dlhc_init(&sensor, &i2c2);
+    lsm303dlhc_mag_enable(&sensor);
+    lsm303dlhc_mag_set_data_rate(&sensor, LSM303DLHC_MAG_DATA_RATE_220);
+    lsm303dlhc_mag_set_gain(&sensor, LSM303DLHC_MAG_GAIN_670_600);
+    uint8_t msg[] = "\n\rZ MAG:                  ";
+    uint16_t x = 42;
+
+    volatile int32_t ui32Loop;
+    while(1) {
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);
+        for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
 
-        //
-        // Delay for a bit.
-        //
-        for(ui32Loop = 0; ui32Loop < 600000; ui32Loop++)
-        {
-        }
+        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_X_H_M, &x);
+        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_Y_H_M, &x);
+        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_Z_H_M, &x);
+        PrintNInt(x, (char *) (msg + 14), 5);
+        UARTSend(msg, 27);
 
-        //
-        // Turn off the LED.
-        //
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
-
-        //
-        // Delay for a bit.
-        //
-        for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++)
-        {
-}
+        for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
     }
 }

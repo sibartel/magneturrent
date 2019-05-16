@@ -15,12 +15,13 @@ endforeach
 
 main = executable(
             'main.elf',
-            ['src/main.c', startupfile],
+            ['src/main.c', 'src/i2c.c', 'src/lsm303dlhc.c', startupfile],
+            include_directories : [inc],
             link_args            : [link_args, '-Wl,--gc-sections'],
             link_with            : driverlib)
 
 maindump = custom_target(
                         'flashable binary',
-      output           : 'main.bin',
+      output           : ['main.bin'],
       command          : ['arm-none-eabi-objcopy', '-S', '-Obinary', 'main.elf', '@OUTPUT@'],
       depends          : main)
