@@ -205,20 +205,15 @@ main(void)
     lsm303dlhcSensor_t sensor;
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
-    lsm303dlhc_mag_set_data_rate(&sensor, LSM303DLHC_MAG_DATA_RATE_220);
-    lsm303dlhc_mag_set_gain(&sensor, LSM303DLHC_MAG_GAIN_670_600);
     uint8_t msg[] = "\n\rZ MAG:                  ";
-    uint16_t x = 42;
 
     volatile int32_t ui32Loop;
     while(1) {
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
 
-        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_X_H_M, &x);
-        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_Y_H_M, &x);
-        lsm303dlhc_mag_read16(&sensor, LSM303DLHC_MAG_REGISTER_OUT_Z_H_M, &x);
-        PrintNInt(x, (char *) (msg + 14), 5);
+        Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
+        PrintNInt(data.z, (char *) (msg + 14), 5);
         UARTSend(msg, 27);
 
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);

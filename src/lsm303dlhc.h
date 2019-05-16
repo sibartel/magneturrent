@@ -42,8 +42,15 @@ typedef enum {
     LSM303DLHC_MAG_GAIN_450_400          = 0b10000000,
     LSM303DLHC_MAG_GAIN_400_355          = 0b10100000,
     LSM303DLHC_MAG_GAIN_300_295          = 0b11000000,
-    LSM303DLHC_MAG_GAIN_230_205          = 0b11100000,
+    LSM303DLHC_MAG_GAIN_230_205          = 0b11100000
 } Lsm303dlhcMagGain_t;
+
+// in 10nG
+typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+} Lsm303dlhcMagData_t;
 
 typedef struct {
     i2cDevice_t* device;
@@ -55,7 +62,11 @@ void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device);
 void lsm303dlhc_mag_enable(lsm303dlhcSensor_t* sensor);
 
 void lsm303dlhc_mag_set_data_rate(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagDataRate_t rate);
+Lsm303dlhcMagDataRate_t lsm303dlhc_mag_get_data_rate(lsm303dlhcSensor_t* sensor);
 void lsm303dlhc_mag_set_gain(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagGain_t gain);
+Lsm303dlhcMagGain_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor);
+
+Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor);
 
 void lsm303dlhc_mag_read(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint8_t* data);
 void lsm303dlhc_mag_read16(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint16_t* data);
