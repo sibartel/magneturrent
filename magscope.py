@@ -12,21 +12,31 @@ fig = plt.figure()
 ax1 = fig.add_subplot(1,1,1)
 
 ser = serial.Serial('/dev/ttyACM2', 115200)
-xs = []
-ys = []
+ts = []
+x = []
+y = []
+z = []
 
 ser.reset_input_buffer()
 
 def animate(i):
-    data_raw = ser.read(4)
-    data = int.from_bytes(data_raw, byteorder="little", signed=True)
-    xs.append(current_milli_time())
-    ys.append(data / 100000000)
-    if len(xs) > 100:
-        xs.pop(0)
-        ys.pop(0)
+    x_raw = ser.read(4)
+    y_raw = ser.read(4)
+    z_raw = ser.read(4)
+    x.append(int.from_bytes(x_raw, byteorder="little", signed=True) / 100000000)
+    y.append(int.from_bytes(y_raw, byteorder="little", signed=True) / 100000000)
+    z.append(int.from_bytes(z_raw, byteorder="little", signed=True) / 100000000)
+
+    ts.append(current_milli_time())
+    if len(ts) > 100:
+        ts.pop(0)
+        x.pop(0)
+        y.pop(0)
+        z.pop(0)
     ax1.clear()
-    ax1.plot(xs, ys)
+    ax1.plot(ts, x)
+    ax1.plot(ts, y)
+    ax1.plot(ts, z)
 
 ani = animation.FuncAnimation(fig, animate, interval=100)
 plt.show()

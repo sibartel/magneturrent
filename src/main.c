@@ -179,7 +179,7 @@ main(void)
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
 
         Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
-        UARTSend((uint8_t*) &(data.z), 4); // Send z to pc
+        UARTSend((uint8_t*) &(data.x), 4 * 3); // Send z to pc
 
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
