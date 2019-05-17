@@ -37,11 +37,6 @@
 #include "i2c.h"
 #include "lsm303dlhc.h"
 
-#include "inc/hw_i2c.h"
-#include "inc/hw_types.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/i2c.h"
-
 //*****************************************************************************
 //
 //! \addtogroup example_list
@@ -119,29 +114,6 @@ UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
     }
 }
 
-void PrintNInt(int16_t val, char *pointer, uint8_t n) {
-  uint16_t printedChars = 0;
-  uint8_t negative = 0;
-  if(val < 0) {
-    negative = 1;
-    val = -val;
-  }
-  while (printedChars < n) {
-    if (val == 0) {
-      if(negative) {
-        pointer[n - ++printedChars] = '-';
-        negative = 0;
-      } else {
-        pointer[n - ++printedChars] = ' ';
-      }
-    } else {
-      int lastDigit = val % 10;
-      pointer[n - ++printedChars] = (char) (lastDigit + '0');
-      val /= 10;
-    }
-  }
-}
-
 //*****************************************************************************
 //
 // This example demonstrates how to send a string of data to the UART.
@@ -194,18 +166,12 @@ main(void)
     IntEnable(INT_UART0);
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
 
-    //
-    // Prompt for text to be entered.
-    //
-    UARTSend((uint8_t *)"\n\rHi from your tivaboard.", 24);
-
     i2cDevice_t i2c2;
     i2c_init(&i2c2);
 
     lsm303dlhcSensor_t sensor;
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
-    uint8_t msg[] = "\n\rZ MAG:                  ";
 
     volatile int32_t ui32Loop;
     while(1) {
@@ -213,8 +179,7 @@ main(void)
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);
 
         Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
-        PrintNInt(data.z, (char *) (msg + 14), 5);
-        UARTSend(msg, 27);
+        UARTSend((uint8_t*) &(data.z), 4); // Send z to pc
 
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
         for(ui32Loop = 0; ui32Loop < 200000; ui32Loop++);

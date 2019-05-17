@@ -8,7 +8,7 @@ Library for the lsm303dlhc sensor.
 void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device) {
     sensor->device = device;
     lsm303dlhc_mag_set_data_rate(sensor, LSM303DLHC_MAG_DATA_RATE_220);
-    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_1100_980);
+    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_400_355);
 }
 
 void lsm303dlhc_mag_enable(lsm303dlhcSensor_t* sensor) {
@@ -35,11 +35,14 @@ Lsm303dlhcMagGain_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor) {
 
 Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor) {
     uint8_t data_raw[3*2];
-    i2c_read_reg(sensor->device, LSM303DLHC_MAG_ADDR, LSM303DLHC_MAG_REGISTER_OUT_X_H_M, &data_raw, 3*2);
+    i2c_read_reg(sensor->device, LSM303DLHC_MAG_ADDR, LSM303DLHC_MAG_REGISTER_OUT_X_H_M, (uint8_t*) &data_raw, 3*2);
+    int16_t x = (data_raw[0] << 8) | data_raw[1];
+    int16_t y = (data_raw[4] << 8) | data_raw[5];
+    int16_t z = (data_raw[2] << 8) | data_raw[3];
     Lsm303dlhcMagData_t data = {
-        .x = (data_raw[0] << 8) | data_raw[1],
-        .z = (data_raw[2] << 8) | data_raw[3],
-        .y = (data_raw[4] << 8) | data_raw[5]
+        .x = x,
+        .y = y,
+        .z = z
     };
     return data;
 }
@@ -50,7 +53,7 @@ void lsm303dlhc_mag_read(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t re
 
 void lsm303dlhc_mag_read16(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint16_t* data) {
     uint16_t data_raw;
-    i2c_read_reg(sensor->device, LSM303DLHC_MAG_ADDR, reg, &data_raw, 2);
+    i2c_read_reg(sensor->device, LSM303DLHC_MAG_ADDR, reg, (uint8_t*) &data_raw, 2);
     *data = (uint16_t) ((data_raw << 8) | (data_raw >> 8));
 }
 
