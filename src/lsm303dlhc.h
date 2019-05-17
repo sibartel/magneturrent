@@ -65,6 +65,8 @@ void lsm303dlhc_mag_set_data_rate(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagDataR
 Lsm303dlhcMagDataRate_t lsm303dlhc_mag_get_data_rate(lsm303dlhcSensor_t* sensor);
 void lsm303dlhc_mag_set_gain(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagGain_t gain);
 Lsm303dlhcMagGain_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor);
+uint32_t lsm303dlhc_mag_get_gain_xy(lsm303dlhcSensor_t* sensor);
+uint32_t lsm303dlhc_mag_get_gain_z(lsm303dlhcSensor_t* sensor);
 
 Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor);
 
