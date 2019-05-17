@@ -1,28 +1,45 @@
+/**
+ * @file watchdog.c
+ * @author Silas Bartel (arvius@web.de)
+ * @brief Small library for the internal watchdog.
+ * @version 0.1
+ * @date 2019-05-17
+ * 
+ */
+
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
 
 #include "watchdog.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/watchdog.h"
 #include "driverlib/sysctl.h"
 
+/**
+ * @brief Initializes the internal watchdog 0.
+ *
+ * To reset the countdown call watchdog_kick().
+ * 
+ */
 void watchdog_init() {
-    // Enable the Watchdog 0 peripheral
+    // Enable wathcdog peripheral and wait until ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WDOG0);
-    // Wait for the Watchdog 0 module to be ready.
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_WDOG0));
-    // Check to see if the registers are locked, and if so, unlock them.
+
+    // Unlock registers if locked, and kick the dog
     if(WatchdogLockState(WATCHDOG0_BASE) == true)
         WatchdogUnlock(WATCHDOG0_BASE);
-    // Initialize the watchdog timer.
-    WatchdogReloadSet(WATCHDOG0_BASE, 0xFEEFEE);
-    // Enable the reset.
+    wathcdog_kick();
+
+    // Remove muzzle and chains
     WatchdogResetEnable(WATCHDOG0_BASE);
-    // Enable the watchdog timer.
     WatchdogEnable(WATCHDOG0_BASE);
 }
 
+/**
+ * @brief Resets the watchdog countdown.
+ * 
+ */
 void watchdog_kick() {
     WatchdogReloadSet(WATCHDOG0_BASE, 0xFEEFEE);
 }
