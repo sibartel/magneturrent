@@ -106,12 +106,8 @@ void i2c_busy_blocking(i2cDevice_t* device) {
 
 void i2c_check_error(i2cDevice_t* device) {
     volatile uint32_t ui32Loop;
-    if(I2CMasterErr(device->base) != I2C_MASTER_ERR_NONE)
-        while(1) {
-            GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);
-            for(ui32Loop = 0; ui32Loop < 100000; ui32Loop++);
-
-            GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
-            for(ui32Loop = 0; ui32Loop < 100000; ui32Loop++);
-        }
+    if(I2CMasterErr(device->base) != I2C_MASTER_ERR_NONE) {
+        GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);
+        while(1);
+    }
 }

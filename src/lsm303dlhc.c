@@ -24,7 +24,7 @@ uint32_t Lsm303dlhcMagGain[] = {
 /* Function declaration for private functions. */
 
 void lsm303dlhc_mag_write(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint8_t data);
-uint32_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor);
+uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor);
 
 
 /* Public function definitions */
@@ -104,9 +104,9 @@ Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor) {
     int16_t x_raw = (data_raw[0] << 8) | data_raw[1];
     int16_t y_raw = (data_raw[4] << 8) | data_raw[5];
     int16_t z_raw = (data_raw[2] << 8) | data_raw[3];
-    int32_t x = x_raw * lsm303dlhc_mag_get_gain(sensor);
-    int32_t y = y_raw * lsm303dlhc_mag_get_gain(sensor);
-    int32_t z = z_raw * lsm303dlhc_mag_get_gain(sensor);
+    int32_t x = x_raw * lsm303dlhc_mag_get_gain_abs(sensor);
+    int32_t y = y_raw * lsm303dlhc_mag_get_gain_abs(sensor);
+    int32_t z = z_raw * lsm303dlhc_mag_get_gain_abs(sensor);
     Lsm303dlhcMagData_t data = {
         .x = x,
         .y = y,
@@ -126,7 +126,7 @@ Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor) {
  * @param sensor handler to the sensor
  * @return uint32_t the absolute gain
  */
-uint32_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor) {
+uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor) {
     return Lsm303dlhcMagGain[lsm303dlhc_mag_get_gain(sensor) >> 5];
 }
 
