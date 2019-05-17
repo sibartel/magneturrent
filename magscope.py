@@ -21,7 +21,7 @@ def animate(i):
     data_raw = ser.read(4)
     data = int.from_bytes(data_raw, byteorder="little", signed=True)
     xs.append(current_milli_time())
-    ys.append(data)
+    ys.append(data / 100000000)
     if len(xs) > 100:
         xs.pop(0)
         ys.pop(0)
