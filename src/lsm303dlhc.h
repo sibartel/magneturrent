@@ -1,11 +1,27 @@
+/**
+ * @file lsm303dlhc.h
+ * @author Silas Bartel (arvius@web.de)
+ * @brief Library for the lsm303dlhc sensor.
+ * @version 0.1
+ * @date 2019-05-17
+ * 
+ * If you search for the documentation,
+ * have a look at the source file.
+ *
+ */
+
 #pragma once
 
 #include <stdint.h>
 #include "i2c.h"
 
+/* 7bit i2c addresses of the acceleration and magnetic subsystem */
 #define LSM303DLHC_ACC_ADDR 0b0011001
 #define LSM303DLHC_MAG_ADDR 0b0011110
 
+/**
+ * @brief The registers of the magnetic subsystem.
+ */
 typedef enum {
     LSM303DLHC_MAG_REGISTER_CRA_REG_M    = 0x00,
     LSM303DLHC_MAG_REGISTER_CRB_REG_M    = 0x01,
@@ -24,6 +40,9 @@ typedef enum {
     LSM303DLHC_MAG_REGISTER_TEMP_OUT_L_M = 0x32
 } Lsm303dlhcMagRegisters_t;
 
+/**
+ * @brief Supported data rates for the magnetic subsystem.
+ */
 typedef enum {
     LSM303DLHC_MAG_DATA_RATE_220         = 0b00011100,
     LSM303DLHC_MAG_DATA_RATE_75          = 0b00011000,
@@ -35,6 +54,9 @@ typedef enum {
     LSM303DLHC_MAG_DATA_RATE_0_75        = 0b00000000
 } Lsm303dlhcMagDataRate_t;
 
+/**
+ * @brief Supported gain settings for the magnetic subsystem.
+ */
 typedef enum {
     LSM303DLHC_MAG_GAIN_1100_980         = 0b00100000,
     LSM303DLHC_MAG_GAIN_855_760          = 0b01000000,
