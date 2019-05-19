@@ -24,6 +24,7 @@ uint32_t Lsm303dlhcMagGain[] = {
 /* Function declaration for private functions. */
 
 void lsm303dlhc_mag_write(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint8_t data);
+void lsm303dlhc_acc_write(lsm303dlhcSensor_t* sensor, Lsm303dlhcAccRegisters_t reg, uint8_t data);
 uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor);
 
 
@@ -48,6 +49,15 @@ void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device) {
  */
 void lsm303dlhc_mag_enable(lsm303dlhcSensor_t* sensor) {
     lsm303dlhc_mag_write(sensor, LSM303DLHC_MAG_REGISTER_MR_REG_M, 0x00);
+}
+
+/**
+ * @brief Enables the acceleration subsystem for a given lsm303dlhc sensor.
+ * 
+ * @param sensor handler to the sensor
+ */
+void lsm303dlhc_acc_enable(lsm303dlhcSensor_t* sensor) {
+    lsm303dlhc_acc_write(sensor, LSM303DLHC_ACC_REGISTER_CTRL_REG1_A, 0x57);
 }
 
 /**
@@ -115,6 +125,23 @@ Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor) {
     return data;
 }
 
+/**
+ * @brief Returns the acceleration data of a given lsm303dlhc sensor.
+ * 
+ * @param sensor handler to the sensor
+ * @return Lsm303dlhcAccData_t struct containing the acceleration in each direction (x, y, z)
+ */
+Lsm303dlhcAccData_t lsm303dlhc_acc_get(lsm303dlhcSensor_t* sensor) {
+    uint8_t data_raw[3*2];
+    i2c_read_reg(sensor->device, LSM303DLHC_ACC_ADDR, LSM303DLHC_ACC_REGISTER_OUT_X_L_A | 0x80, (uint8_t*) &data_raw, 3*2);
+    Lsm303dlhcAccData_t data = {
+        .x = (int16_t) (data_raw[0] | (data_raw[1] << 8)) >> 4,
+        .y = (int16_t) (data_raw[2] | (data_raw[3] << 8)) >> 4,
+        .z = (int16_t) (data_raw[4] | (data_raw[5] << 8)) >> 4
+    };
+    return data;
+}
+
 
 /* Private Functions */
 
@@ -139,4 +166,15 @@ uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor) {
  */
 void lsm303dlhc_mag_write(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagRegisters_t reg, uint8_t data) {
     i2c_write_reg(sensor->device, LSM303DLHC_MAG_ADDR, reg, &data, 1);
+}
+
+/**
+ * @brief Writes data into register of the acceleration subsystem of a given lsm303dlhc sensor.
+ * 
+ * @param sensor handler to the sensor
+ * @param reg register the data is written to
+ * @param data data
+ */
+void lsm303dlhc_acc_write(lsm303dlhcSensor_t* sensor, Lsm303dlhcAccRegisters_t reg, uint8_t data) {
+    i2c_write_reg(sensor->device, LSM303DLHC_ACC_ADDR, reg, &data, 1);
 }

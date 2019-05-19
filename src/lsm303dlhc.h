@@ -20,6 +20,42 @@
 #define LSM303DLHC_MAG_ADDR 0b0011110
 
 /**
+ * @brief The registers of the acceleration subsystem.
+ */
+typedef enum {
+    LSM303DLHC_ACC_REGISTER_CTRL_REG1_A         = 0x20,
+    LSM303DLHC_ACC_REGISTER_CTRL_REG2_A         = 0x21,
+    LSM303DLHC_ACC_REGISTER_CTRL_REG3_A         = 0x22,
+    LSM303DLHC_ACC_REGISTER_CTRL_REG4_A         = 0x23,
+    LSM303DLHC_ACC_REGISTER_CTRL_REG5_A         = 0x24,
+    LSM303DLHC_ACC_REGISTER_CTRL_REG6_A         = 0x25,
+    LSM303DLHC_ACC_REGISTER_REFERENCE_A         = 0x26,
+    LSM303DLHC_ACC_REGISTER_STATUS_REG_A        = 0x27,
+    LSM303DLHC_ACC_REGISTER_OUT_X_L_A           = 0x28,
+    LSM303DLHC_ACC_REGISTER_OUT_X_H_A           = 0x29,
+    LSM303DLHC_ACC_REGISTER_OUT_Y_L_A           = 0x2A,
+    LSM303DLHC_ACC_REGISTER_OUT_Y_H_A           = 0x2B,
+    LSM303DLHC_ACC_REGISTER_OUT_Z_L_A           = 0x2C,
+    LSM303DLHC_ACC_REGISTER_OUT_Z_H_A           = 0x2D,
+    LSM303DLHC_ACC_REGISTER_FIFO_CTRL_REG_A     = 0x2E,
+    LSM303DLHC_ACC_REGISTER_FIFO_SRC_REG_A      = 0x2F,
+    LSM303DLHC_ACC_REGISTER_INT1_CFG_A          = 0x30,
+    LSM303DLHC_ACC_REGISTER_INT1_SOURCE_A       = 0x31,
+    LSM303DLHC_ACC_REGISTER_INT1_THS_A          = 0x32,
+    LSM303DLHC_ACC_REGISTER_INT1_DURATION_A     = 0x33,
+    LSM303DLHC_ACC_REGISTER_INT2_CFG_A          = 0x34,
+    LSM303DLHC_ACC_REGISTER_INT2_SOURCE_A       = 0x35,
+    LSM303DLHC_ACC_REGISTER_INT2_THS_A          = 0x36,
+    LSM303DLHC_ACC_REGISTER_INT2_DURATION_A     = 0x37,
+    LSM303DLHC_ACC_REGISTER_CLICK_CFG_A         = 0x38,
+    LSM303DLHC_ACC_REGISTER_CLICK_SRC_A         = 0x39,
+    LSM303DLHC_ACC_REGISTER_CLICK_THS_A         = 0x3A,
+    LSM303DLHC_ACC_REGISTER_TIME_LIMIT_A        = 0x3B,
+    LSM303DLHC_ACC_REGISTER_TIME_LATENCY_A      = 0x3C,
+    LSM303DLHC_ACC_REGISTER_TIME_WINDOW_A       = 0x3D
+} Lsm303dlhcAccRegisters_t;
+
+/**
  * @brief The registers of the magnetic subsystem.
  */
 typedef enum {
@@ -74,6 +110,13 @@ typedef struct {
     int32_t z;
 } Lsm303dlhcMagData_t;
 
+// in ?
+typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+} Lsm303dlhcAccData_t;
+
 typedef struct {
     i2cDevice_t* device;
     Lsm303dlhcMagDataRate_t mag_data_rate;
@@ -82,6 +125,8 @@ typedef struct {
 
 void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device);
 void lsm303dlhc_mag_enable(lsm303dlhcSensor_t* sensor);
+void lsm303dlhc_acc_enable(lsm303dlhcSensor_t* sensor);
+
 
 void lsm303dlhc_mag_set_data_rate(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagDataRate_t rate);
 Lsm303dlhcMagDataRate_t lsm303dlhc_mag_get_data_rate(lsm303dlhcSensor_t* sensor);
@@ -89,3 +134,4 @@ void lsm303dlhc_mag_set_gain(lsm303dlhcSensor_t* sensor, Lsm303dlhcMagGain_t gai
 Lsm303dlhcMagGain_t lsm303dlhc_mag_get_gain(lsm303dlhcSensor_t* sensor);
 
 Lsm303dlhcMagData_t lsm303dlhc_mag_get(lsm303dlhcSensor_t* sensor);
+Lsm303dlhcAccData_t lsm303dlhc_acc_get(lsm303dlhcSensor_t* sensor);
