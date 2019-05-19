@@ -20,6 +20,7 @@ main = executable(
                 'src/i2c.c',
                 'src/lsm303dlhc.c',
                 'src/watchdog.c',
+                'src/heartbeat.c',
                 'src/uart.c',
                 startupfile
             ],

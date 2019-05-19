@@ -12,6 +12,7 @@
 #include "lsm303dlhc.h"
 #include "watchdog.h"
 #include "uart.h"
+#include "heartbeat.h"
 
 // Error handler
 #ifdef DEBUG
@@ -35,10 +36,7 @@ void main() {
     // Enable Interrupts
     IntMasterEnable();
 
-    // Set output for heartbeat led.
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
-    GPIOPinTypeGPIOOutput(GPIO_PORTG_BASE, GPIO_PIN_2);
-
+    heartbeat_init();
     uart_init();
     watchdog_init();
 
@@ -49,16 +47,11 @@ void main() {
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
 
-    volatile int32_t ui32Loop;
     while(1) {
-        GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);
-        for(ui32Loop = 0; ui32Loop < 50000; ui32Loop++);
-
         Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
         uart_send((uint8_t*) &(data.x), 4 * 3);
+        
         watchdog_kick();
-
-        GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
-        for(ui32Loop = 0; ui32Loop < 50000; ui32Loop++);
+        heartbeat_process();
     }
 }
