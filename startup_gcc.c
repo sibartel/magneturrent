@@ -36,14 +36,19 @@ static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
 
-extern void UARTIntHandler(void);
+//*****************************************************************************
+//
+// External Interupt Handlers
+//
+//*****************************************************************************
+extern void uart_interrupt_handler();
 
 //*****************************************************************************
 //
 // The entry point for the application.
 //
 //*****************************************************************************
-extern int main(void);
+extern void main();
 
 //*****************************************************************************
 //
@@ -83,7 +88,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    UARTIntHandler,                         // UART0 Rx and Tx
+    uart_interrupt_handler,                 // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave

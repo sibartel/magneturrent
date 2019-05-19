@@ -29,7 +29,7 @@ void watchdog_init() {
     // Unlock registers if locked, and kick the dog
     if(WatchdogLockState(WATCHDOG0_BASE) == true)
         WatchdogUnlock(WATCHDOG0_BASE);
-    wathcdog_kick();
+    watchdog_kick();
 
     // Remove muzzle and chains
     WatchdogResetEnable(WATCHDOG0_BASE);
