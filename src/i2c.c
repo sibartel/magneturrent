@@ -13,31 +13,31 @@
 #include "driverlib/sysctl.h"
 
 void i2c_init(i2cDevice_t* device) {
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C2);
-    SysCtlPeripheralReset(SYSCTL_PERIPH_I2C2);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C5);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_I2C5);
     
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
 
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_I2C2) || !SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF));
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_I2C5) || !SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOG));
  
     // Configure the pin muxing for I2C0 functions on port B2 and B3.
-    GPIOPinConfigure(GPIO_PF6_I2C2SCL);
-    GPIOPinConfigure(GPIO_PF7_I2C2SDA);
+    GPIOPinConfigure(GPIO_PG6_I2C5SCL);
+    GPIOPinConfigure(GPIO_PG7_I2C5SDA);
 
     // Select the I2C function for these pins.
-    GPIOPinTypeI2CSCL(GPIO_PORTF_BASE, GPIO_PIN_6);
-    GPIOPinTypeI2C(GPIO_PORTF_BASE, GPIO_PIN_7);
+    GPIOPinTypeI2CSCL(GPIO_PORTG_BASE, GPIO_PIN_6);
+    GPIOPinTypeI2C(GPIO_PORTG_BASE, GPIO_PIN_7);
  
     // Enable and initialize the I2C0 master module.  Use the system clock for
     // the I2C0 module.  The last parameter sets the I2C data transfer rate.
     // If false the data rate is set to 100kbps and if true the data rate will
     // be set to 400kbps.
-    I2CMasterInitExpClk(I2C2_BASE, SysCtlClockGet(), false);
+    I2CMasterInitExpClk(I2C5_BASE, SysCtlClockGet(), false);
 
     //clear I2C FIFOs
-    HWREG(I2C2_BASE + I2C_O_FIFOCTL) = 80008000;
+    HWREG(I2C5_BASE + I2C_O_FIFOCTL) = 80008000;
 
-    device->base = I2C2_BASE;
+    device->base = I2C5_BASE;
 }
 
 void i2c_write_reg(i2cDevice_t* device, uint8_t addr, uint8_t reg, uint8_t* data, uint8_t size) {
