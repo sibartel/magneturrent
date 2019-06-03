@@ -47,11 +47,13 @@ void main() {
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
 
+    volatile int32_t ui32Loop;
     while(1) {
         Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
         uart_send((uint8_t*) &(data.x), 4 * 3);
         
         watchdog_kick();
         heartbeat_process();
+        for(ui32Loop = 0; ui32Loop < 50000; ui32Loop++);
     }
 }
