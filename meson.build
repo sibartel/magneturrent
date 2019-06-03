@@ -22,6 +22,7 @@ main = executable(
                 'src/watchdog.c',
                 'src/heartbeat.c',
                 'src/uart.c',
+                'src/extint.c',
                 startupfile
             ],
             include_directories : [inc],

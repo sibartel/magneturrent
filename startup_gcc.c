@@ -42,6 +42,7 @@ static void IntDefaultHandler(void);
 //
 //*****************************************************************************
 extern void uart_interrupt_handler();
+extern void gpio_interrupt_handler();
 
 //*****************************************************************************
 //
@@ -83,11 +84,11 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
-    IntDefaultHandler,                      // GPIO Port A
-    IntDefaultHandler,                      // GPIO Port B
-    IntDefaultHandler,                      // GPIO Port C
-    IntDefaultHandler,                      // GPIO Port D
-    IntDefaultHandler,                      // GPIO Port E
+    gpio_interrupt_handler,                 // GPIO Port A
+    gpio_interrupt_handler,                 // GPIO Port B
+    gpio_interrupt_handler,                 // GPIO Port C
+    gpio_interrupt_handler,                 // GPIO Port D
+    gpio_interrupt_handler,                 // GPIO Port E
     uart_interrupt_handler,                 // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
@@ -113,9 +114,9 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Analog Comparator 2
     IntDefaultHandler,                      // System Control (PLL, OSC, BO)
     IntDefaultHandler,                      // FLASH Control
-    IntDefaultHandler,                      // GPIO Port F
-    IntDefaultHandler,                      // GPIO Port G
-    IntDefaultHandler,                      // GPIO Port H
+    gpio_interrupt_handler,                 // GPIO Port F
+    gpio_interrupt_handler,                 // GPIO Port G
+    gpio_interrupt_handler,                 // GPIO Port H
     IntDefaultHandler,                      // UART2 Rx and Tx
     IntDefaultHandler,                      // SSI1 Rx and Tx
     IntDefaultHandler,                      // Timer 3 subtimer A
@@ -137,9 +138,9 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC1 Sequence 3
     0,                                      // Reserved
     0,                                      // Reserved
-    IntDefaultHandler,                      // GPIO Port J
-    IntDefaultHandler,                      // GPIO Port K
-    IntDefaultHandler,                      // GPIO Port L
+    gpio_interrupt_handler,                 // GPIO Port J
+    gpio_interrupt_handler,                 // GPIO Port K
+    gpio_interrupt_handler,                 // GPIO Port L
     IntDefaultHandler,                      // SSI2 Rx and Tx
     IntDefaultHandler,                      // SSI3 Rx and Tx
     IntDefaultHandler,                      // UART3 Rx and Tx
@@ -194,8 +195,8 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // I2C4 Master and Slave
     IntDefaultHandler,                      // I2C5 Master and Slave
-    IntDefaultHandler,                      // GPIO Port M
-    IntDefaultHandler,                      // GPIO Port N
+    gpio_interrupt_handler,                 // GPIO Port M
+    gpio_interrupt_handler,                 // GPIO Port N
     IntDefaultHandler,                      // Quadrature Encoder 2
     0,                                      // Reserved
     0,                                      // Reserved

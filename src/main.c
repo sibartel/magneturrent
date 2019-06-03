@@ -12,6 +12,7 @@
 #include "lsm303dlhc.h"
 #include "watchdog.h"
 #include "uart.h"
+#include "extint.h"
 #include "heartbeat.h"
 
 // Error handler
@@ -21,6 +22,13 @@ __error__(char *pcFilename, uint32_t ui32Line)
 {
 }
 #endif
+
+lsm303dlhcSensor_t sensor;
+
+void read_data() {
+    Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
+    uart_send((uint8_t*) &(data.x), 4 * 3);
+}
 
 void main() {
     //
@@ -43,17 +51,13 @@ void main() {
     i2cDevice_t i2c2;
     i2c_init(&i2c2);
 
-    lsm303dlhcSensor_t sensor;
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
 
-    volatile int32_t ui32Loop;
+    extint_register_handler(&read_data);
+
     while(1) {
-        Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
-        uart_send((uint8_t*) &(data.x), 4 * 3);
-        
         watchdog_kick();
         heartbeat_process();
-        for(ui32Loop = 0; ui32Loop < 50000; ui32Loop++);
     }
 }
