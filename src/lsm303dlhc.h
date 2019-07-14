@@ -1,6 +1,6 @@
 /**
  * @file lsm303dlhc.h
- * @author Silas Bartel (arvius@web.de)
+ * @author Silas Bartel (silas.a.bartel@gmail.com)
  * @brief Library for the lsm303dlhc sensor.
  * @version 0.1
  * @date 2019-05-17
