@@ -23,6 +23,7 @@ main = executable(
                 'src/heartbeat.c',
                 'src/uart.c',
                 'src/extint.c',
+                'src/interface.c',
                 startupfile
             ],
             include_directories : [inc],
