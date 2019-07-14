@@ -24,6 +24,7 @@ main = executable(
                 'src/uart.c',
                 'src/extint.c',
                 'src/interface.c',
+                'src/model.c',
                 startupfile
             ],
             include_directories : [inc],
