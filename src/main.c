@@ -14,6 +14,8 @@
 #include "uart.h"
 #include "extint.h"
 #include "heartbeat.h"
+#include "interface.h"
+#include "model.h"
 
 // Error handler
 #ifdef DEBUG
@@ -24,10 +26,12 @@ __error__(char *pcFilename, uint32_t ui32Line)
 #endif
 
 lsm303dlhcSensor_t sensor;
+Model_t model;
 
 void read_data() {
     Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
-    uart_send((uint8_t*) &(data.x), 4 * 3);
+    model_update_mag(&model, data);
+    interface_send(model_get_status(&model),model_get_current(&model));
 }
 
 void main() {
@@ -47,6 +51,8 @@ void main() {
     heartbeat_init();
     uart_init();
     watchdog_init();
+
+    model_init(&model);
 
     i2cDevice_t i2c2;
     i2c_init(&i2c2);
