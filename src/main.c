@@ -17,6 +17,7 @@
 #include "interface.h"
 #include "model.h"
 #include "button.h"
+#include "sysmillis.h"
 
 // Error handler
 #ifdef DEBUG
@@ -54,6 +55,7 @@ void main() {
     // Enable Interrupts
     IntMasterEnable();
 
+    sysmillis_init();
     heartbeat_init();
     uart_init();
     watchdog_init();
@@ -72,8 +74,14 @@ void main() {
     extint_register_handler(read_data);
     button_register_handler(calibrate);
 
+    uint32_t last_acc_check = 0;
     while(1) {
         watchdog_kick();
         heartbeat_process();
+        if(sysmillis_get() - last_acc_check > 1000) {
+            last_acc_check = sysmillis_get();
+            //Lsm303dlhcAccData_t acc_data = lsm303dlhc_acc_get(&sensor);
+            //model_update_acc(&model, acc_data);
+        }
     }
 }

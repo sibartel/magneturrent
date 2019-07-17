@@ -10,7 +10,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdlib.h>
 
 #include "model.h"
 
@@ -24,6 +23,12 @@
  * @brief Threshold causing invalidation of calibration.
  */
 #define MODEL_ACC_THRESHOLD 1000
+
+int32_t abs(int32_t val) {
+    if(val < 0)
+        val *= -1;
+    return val;
+}
 
 /**
  * @brief Initializes a instants of the application model.
@@ -63,7 +68,7 @@ void model_update_mag(Model_t* model, Lsm303dlhcMagData_t data) {
  * @param data the new acceleration data
  */
 void model_update_acc(Model_t* model, Lsm303dlhcAccData_t data) {
-    if(abs(data.x) > MODEL_ACC_THRESHOLD || abs(data.x) > MODEL_ACC_THRESHOLD)
+    if(abs(data.x) > MODEL_ACC_THRESHOLD || abs(data.y) > MODEL_ACC_THRESHOLD)
         model->calibrated = false;
 }
 
