@@ -3,6 +3,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 import serial
 import time
+import struct
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
@@ -13,31 +14,27 @@ ax1 = fig.add_subplot(1,1,1)
 
 ser = serial.Serial('/dev/ttyACM2', 115200)
 ts = []
-x = []
-y = []
-z = []
+current = []
 
 ser.reset_input_buffer()
 
 def animate(i):
-    while(ser.inWaiting() >= 12):
-        x_raw = ser.read(4)
-        y_raw = ser.read(4)
-        z_raw = ser.read(4)
-        x.append(int.from_bytes(x_raw, byteorder="little", signed=True) / 100000000)
-        y.append(int.from_bytes(y_raw, byteorder="little", signed=True) / 100000000)
-        z.append(int.from_bytes(z_raw, byteorder="little", signed=True) / 100000000)
+    while(ser.inWaiting() >= 6):
+        magic_byte = struct.unpack('B', ser.read(1))
+        if magic_byte != 0xbe:
+            continue
+        
+        status = struct.unpack('B', ser.read(1))
+        if status == 0:
+            plt.text(0, 0, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5))
 
+        current.append(struct.unpack('<f', ser.read(4)))
         ts.append(current_milli_time())
         if len(ts) > 300:
             ts.pop(0)
-            x.pop(0)
-            y.pop(0)
-            z.pop(0)
+            current.pop(0)
     ax1.clear()
-    ax1.plot(ts, x)
-    ax1.plot(ts, y)
-    ax1.plot(ts, z)
+    ax1.plot(ts, current)
 
 ani = animation.FuncAnimation(fig, animate, interval=10)
 plt.show()
