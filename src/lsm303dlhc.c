@@ -40,7 +40,7 @@ uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor);
 void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device) {
     sensor->device = device;
     lsm303dlhc_mag_set_data_rate(sensor, LSM303DLHC_MAG_DATA_RATE_220);
-    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_230_205);
+    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_1100_980);
 }
 
 /**

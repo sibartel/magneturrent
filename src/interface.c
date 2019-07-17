@@ -13,6 +13,7 @@
 
 #include "interface.h"
 #include "uart.h"
+#include "sysmillis.h"
 
 /**
  * @brief Magic byte used by the interface.
@@ -26,9 +27,10 @@ typedef union {
     struct {
         uint8_t magic_byte;
         uint8_t status;
+        uint32_t timestamp;
         float payload;
     } __attribute__((packed));
-    uint8_t raw[6];
+    uint8_t raw[10];
 } InterfaceDataFrame_t;
 
 /**
@@ -41,6 +43,7 @@ void interface_send(uint8_t status, float payload) {
     InterfaceDataFrame_t data_frame;
     data_frame.magic_byte = INTERFACE_MAGIC_BYTE;
     data_frame.status = status;
+    data_frame.timestamp = sysmillis_get();
     data_frame.payload = payload;
     uart_send((uint8_t*) &(data_frame.raw), sizeof(data_frame.raw));
 }

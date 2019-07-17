@@ -14,8 +14,9 @@ while True:
             continue
         
         status = struct.unpack('B', ser.read(1))[0]
+        timestamp = struct.unpack('<I', ser.read(4))[0]
         current = struct.unpack('<f', ser.read(4))[0]
 
-        print("Status: ", status, " Value: ", current)
+        print("Status: ", status, " Timestamp: ", timestamp, " Value: ", current)
 
 ser.close()

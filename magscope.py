@@ -28,8 +28,9 @@ def animate(i):
         if status == 0:
             plt.text(0, 0, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5), horizontalalignment='center', verticalalignment='center', transform=ax1.transAxes)
 
+        timestamp = struct.unpack('<I', ser.read(4))[0]
         current.append(struct.unpack('<f', ser.read(4))[0])
-        ts.append(current_milli_time())
+        ts.append(timestamp)
         if len(ts) > 1000:
             ts.pop(0)
             current.pop(0)
