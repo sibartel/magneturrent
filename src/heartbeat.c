@@ -16,7 +16,7 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/gpio.h"
 
-volatile uint32_t heartbeat_sysmillis = 0;
+static volatile uint32_t heartbeat_sysmillis = 0;
 void hearbeat_systick_handler();
 
 /**
@@ -43,7 +43,7 @@ void heartbeat_init() {
  */
 void heartbeat_process() {
     static uint32_t last_beat = 0;
-    if(heartbeat_sysmillis - last_beat > 4000) {
+    if(heartbeat_sysmillis - last_beat > 8000) {
         last_beat = heartbeat_sysmillis;
         // Time for some beats. Funk it up.
         if(!GPIOPinRead(GPIO_PORTG_BASE, GPIO_PIN_2))

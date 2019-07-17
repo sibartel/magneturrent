@@ -60,7 +60,8 @@ void main() {
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
 
-    extint_register_handler(&read_data);
+    extint_init();
+    extint_register_handler(read_data);
 
     while(1) {
         watchdog_kick();

@@ -16,6 +16,7 @@ void extint_init() {
 
     GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);
     GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4, GPIO_FALLING_EDGE);
+    GPIOIntRegister(GPIO_PORTF_BASE, gpio_interrupt_handler);
     GPIOIntEnable(GPIO_PORTF_BASE, GPIO_INT_PIN_4);
 }
 
@@ -24,6 +25,7 @@ void extint_register_handler(void (*handler)()) {
 }
 
 void gpio_interrupt_handler() {
+    GPIOIntClear(GPIO_PORTF_BASE, GPIO_INT_PIN_4);
     if(extint_handler)
         extint_handler();
 }
