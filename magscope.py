@@ -26,7 +26,7 @@ def animate(i):
         
         status = struct.unpack('B', ser.read(1))[0]
         if status == 0:
-            plt.text(0, 0, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5))
+            plt.text(0, 0, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5), horizontalalignment='center', verticalalignment='center', transform=ax1.transAxes)
 
         current.append(struct.unpack('<f', ser.read(4))[0])
         ts.append(current_milli_time())
@@ -34,9 +34,10 @@ def animate(i):
             ts.pop(0)
             current.pop(0)
     ax1.clear()
+    plt.ylim([-1, 5])
     ax1.plot(ts, current)
 
-ani = animation.FuncAnimation(fig, animate, interval=10)
+ani = animation.FuncAnimation(fig, animate, interval=1)
 plt.show()
 
 ser.close()

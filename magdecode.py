@@ -14,8 +14,8 @@ while True:
             continue
         
         status = struct.unpack('B', ser.read(1))[0]
-
         current = struct.unpack('<f', ser.read(4))[0]
-        print(current)
+
+        print("Status: ", status, " Value: ", current)
 
 ser.close()
