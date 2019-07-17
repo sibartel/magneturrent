@@ -36,7 +36,7 @@ int32_t abs(int32_t val) {
  * @param model handler for the model
  */
 void model_init(Model_t* model) {
-    model->calibrated = false;
+    model->calibrated = MODEL_CALIBRATION_NONE;
     model->mag_offset.x = 0;
     model->mag_offset.y = 0;
     model->mag_offset.z = 0;
@@ -50,9 +50,10 @@ void model_init(Model_t* model) {
  * @param data the new magnetic data
  */
 void model_update_mag(Model_t* model, Lsm303dlhcMagData_t data) {
-    if(!model->calibrated)
+    if(model->calibrated == MODEL_CALIBRATION_WAITING) {
         model->mag_offset = data;
-    else {
+        model->calibrated = MODEL_CALIBRATION_DONE;
+    } else {
         data.x -= model->mag_offset.x;
         data.y -= model->mag_offset.y;
         data.z -= model->mag_offset.z;
@@ -78,7 +79,7 @@ void model_update_acc(Model_t* model, Lsm303dlhcAccData_t data) {
  * @param model handler for the model
  */
 void model_calibrate(Model_t* model) {
-    model->calibrated = true;
+    model->calibrated = MODEL_CALIBRATION_WAITING;
 }
 
 /**

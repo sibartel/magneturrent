@@ -14,8 +14,14 @@
 
 #include "lsm303dlhc.h"
 
+typedef enum {
+    MODEL_CALIBRATION_NONE,
+    MODEL_CALIBRATION_WAITING,
+    MODEL_CALIBRATION_DONE
+} ModelCalibration_t;
+
 typedef struct {
-    bool calibrated;
+    ModelCalibration_t calibrated;
     Lsm303dlhcMagData_t mag_offset;
     float current;
 } Model_t;
