@@ -25,6 +25,7 @@ main = executable(
                 'src/extint.c',
                 'src/interface.c',
                 'src/model.c',
+                'src/button.c',
                 startupfile
             ],
             include_directories : [inc],

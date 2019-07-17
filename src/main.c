@@ -16,6 +16,7 @@
 #include "heartbeat.h"
 #include "interface.h"
 #include "model.h"
+#include "button.h"
 
 // Error handler
 #ifdef DEBUG
@@ -27,6 +28,10 @@ __error__(char *pcFilename, uint32_t ui32Line)
 
 lsm303dlhcSensor_t sensor;
 Model_t model;
+
+void calibrate() {
+    model_calibrate(&model);
+}
 
 void read_data() {
     Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
@@ -52,6 +57,7 @@ void main() {
     heartbeat_init();
     uart_init();
     watchdog_init();
+    button_init();
 
     model_init(&model);
 
@@ -60,11 +66,11 @@ void main() {
 
     lsm303dlhc_init(&sensor, &i2c2);
     lsm303dlhc_mag_enable(&sensor);
+    lsm303dlhc_acc_enable(&sensor);
 
     extint_init();
     extint_register_handler(read_data);
-
-    model_calibrate(&model);
+    button_register_handler(calibrate);
 
     while(1) {
         watchdog_kick();
