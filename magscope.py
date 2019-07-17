@@ -12,7 +12,7 @@ style.use('fivethirtyeight')
 fig = plt.figure()
 ax1 = fig.add_subplot(1,1,1)
 
-ser = serial.Serial('/dev/ttyACM2', 115200)
+ser = serial.Serial('/dev/ttyACM1', 115200)
 ts = []
 current = []
 
@@ -20,17 +20,17 @@ ser.reset_input_buffer()
 
 def animate(i):
     while(ser.inWaiting() >= 6):
-        magic_byte = struct.unpack('B', ser.read(1))
+        magic_byte = struct.unpack('B', ser.read(1))[0]
         if magic_byte != 0xbe:
             continue
         
-        status = struct.unpack('B', ser.read(1))
+        status = struct.unpack('B', ser.read(1))[0]
         if status == 0:
             plt.text(0, 0, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5))
 
-        current.append(struct.unpack('<f', ser.read(4)))
+        current.append(struct.unpack('<f', ser.read(4))[0])
         ts.append(current_milli_time())
-        if len(ts) > 300:
+        if len(ts) > 1000:
             ts.pop(0)
             current.pop(0)
     ax1.clear()
