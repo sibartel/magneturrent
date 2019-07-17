@@ -26,6 +26,7 @@ main = executable(
                 'src/interface.c',
                 'src/model.c',
                 'src/button.c',
+                'src/sysmillis.c',
                 startupfile
             ],
             include_directories : [inc],
