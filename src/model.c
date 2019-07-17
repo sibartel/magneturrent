@@ -18,7 +18,7 @@
  * @brief Used to calculate the current.
  *        Depending on the distance of the cable to the sensor.
  */
-#define MODEL_MAG_CURRENT_FACTOR 1.0f
+#define MODEL_MAG_CURRENT_FACTOR 100000000
 
 /**
  * @brief Threshold causing invalidation of calibration.
@@ -52,7 +52,7 @@ void model_update_mag(Model_t* model, Lsm303dlhcMagData_t data) {
         data.y -= model->mag_offset.y;
         data.z -= model->mag_offset.z;
 
-        model->current = data.z * MODEL_MAG_CURRENT_FACTOR;
+        model->current = ((float) data.z) / MODEL_MAG_CURRENT_FACTOR;
     }
 }
 

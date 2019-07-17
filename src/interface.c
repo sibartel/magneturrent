@@ -27,7 +27,7 @@ typedef union {
         uint8_t magic_byte;
         uint8_t status;
         float payload;
-    };
+    } __attribute__((packed));
     uint8_t raw[6];
 } InterfaceDataFrame_t;
 

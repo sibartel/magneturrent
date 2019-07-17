@@ -31,7 +31,7 @@ Model_t model;
 void read_data() {
     Lsm303dlhcMagData_t data = lsm303dlhc_mag_get(&sensor);
     model_update_mag(&model, data);
-    interface_send(model_get_status(&model),model_get_current(&model));
+    interface_send(model_get_status(&model), model_get_current(&model));
 }
 
 void main() {
@@ -40,6 +40,7 @@ void main() {
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
     //
+    FPUEnable();
     FPULazyStackingEnable();
 
     // Clock settings
@@ -62,6 +63,8 @@ void main() {
 
     extint_init();
     extint_register_handler(read_data);
+
+    model_calibrate(&model);
 
     while(1) {
         watchdog_kick();

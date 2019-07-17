@@ -10,15 +10,16 @@
 #include "lsm303dlhc.h"
 #include "i2c.h"
 
+/* Best calibrated for z axis */
 uint32_t Lsm303dlhcMagGain[] = {
     0,
-    90909,
-    116959,
-    149254,
-    222222,
+    102041,
+    131579,
+    166667,
     250000,
-    333333,
-    434782
+    281690,
+    338983,
+    487804
 };
 
 /* Function declaration for private functions. */
@@ -39,7 +40,7 @@ uint32_t lsm303dlhc_mag_get_gain_abs(lsm303dlhcSensor_t* sensor);
 void lsm303dlhc_init(lsm303dlhcSensor_t* sensor, i2cDevice_t* device) {
     sensor->device = device;
     lsm303dlhc_mag_set_data_rate(sensor, LSM303DLHC_MAG_DATA_RATE_220);
-    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_1100_980);
+    lsm303dlhc_mag_set_gain(sensor, LSM303DLHC_MAG_GAIN_230_205);
 }
 
 /**
