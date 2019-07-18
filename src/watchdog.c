@@ -1,6 +1,8 @@
 /**
  * @file watchdog.c
  * @author Silas Bartel (silas.a.bartel@gmail.com)
+ * @author Martin Bauer
+ * @author Moritz Amann
  * @brief Small library for the internal watchdog.
  * @version 0.1
  * @date 2019-05-17
