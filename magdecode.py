@@ -1,7 +1,12 @@
 import serial
 import struct
+import sys
 
-ser = serial.Serial('/dev/ttyACM1', 115200)
+if len(sys.argv) != 2:
+    print("Usage: ", sys.argv[0], " <serial device>")
+    sys.exit()
+
+ser = serial.Serial(sys.argv[1], 115200)
 xs = []
 ys = []
 
