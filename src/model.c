@@ -17,7 +17,7 @@
  * @brief Used to calculate the current.
  *        Depending on the distance of the cable to the sensor.
  */
-#define MODEL_MAG_CURRENT_FACTOR -12100000
+#define MODEL_MAG_CURRENT_FACTOR -11616000
 
 /**
  * @brief Threshold causing invalidation of calibration.

@@ -22,6 +22,6 @@ while True:
         timestamp = struct.unpack('<I', ser.read(4))[0]
         current = struct.unpack('<f', ser.read(4))[0]
 
-        print("Status: ", status, " Timestamp: ", timestamp, " Value: ", current)
+        print("%d;%d;%f" % (status, timestamp, current))
 
 ser.close()

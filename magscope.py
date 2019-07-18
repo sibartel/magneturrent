@@ -12,7 +12,7 @@ if len(sys.argv) != 2:
 
 style.use('fivethirtyeight')
 
-fig = plt.figure()
+fig = plt.figure(num="Current Scope")
 ax1 = fig.add_subplot(1,1,1)
 
 ser = serial.Serial(sys.argv[1], 115200)
@@ -22,6 +22,8 @@ current = []
 ser.reset_input_buffer()
 
 def animate(i):
+    global ts
+    global current
     ax1.clear()
     while(ser.inWaiting() >= 6):
         magic_byte = struct.unpack('B', ser.read(1))[0]
@@ -29,22 +31,23 @@ def animate(i):
             continue
         
         status = struct.unpack('B', ser.read(1))[0]
+        timestamp = struct.unpack('<I', ser.read(4))[0]
+        current.append(struct.unpack('<f', ser.read(4))[0])
+
         if status != 2:
             if status == 0:
                 plt.text(0.5, 0.5, 'Not calibrated!', bbox=dict(facecolor='red', alpha=0.5), horizontalalignment='center', verticalalignment='center', transform=ax1.transAxes)
             else:
-                plt.text(0.5, 0.5, 'Calibration ongoing!', bbox=dict(facecolor='red', alpha=0.5), horizontalalignment='center', verticalalignment='center', transform=ax1.transAxes)
+                plt.text(0.5, 0.5, 'Calibration ongoing!', bbox=dict(facecolor='orange', alpha=0.5), horizontalalignment='center', verticalalignment='center', transform=ax1.transAxes)
             ts = []
             current = []
-            break
+            continue
 
-        timestamp = struct.unpack('<I', ser.read(4))[0]
-        current.append(struct.unpack('<f', ser.read(4))[0])
         ts.append(timestamp)
         if len(ts) > 1000:
             ts.pop(0)
             current.pop(0)
-    plt.ylim([-1, 5])
+    plt.ylim([-1, 6])
     ax1.plot(ts, current)
 
 ani = animation.FuncAnimation(fig, animate, interval=1)
