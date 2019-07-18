@@ -1,6 +1,16 @@
-#pragma once
+/**
+ * @file i2c.h
+ * @author Silas Bartel (silas.a.bartel@gmail.com)
+ * @brief Small library for the internal i2c.
+ * @version 0.1
+ * @date 2019-07-17
+ * 
+ * If you search for the documentation,
+ * have a look at the source file.
+ *
+ */
 
-#include <stdint.h>
+#pragma once
 
 typedef struct {
     uint32_t base;

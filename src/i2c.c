@@ -1,3 +1,12 @@
+/**
+ * @file i2c.h
+ * @author Silas Bartel (silas.a.bartel@gmail.com)
+ * @brief Small library for the internal i2c.
+ * @version 0.1
+ * @date 2019-07-17
+ *
+ */
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -12,6 +21,10 @@
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
 
+/**
+ * @brief Initializes the i2c peripheral
+ * 
+ */
 void i2c_init(i2cDevice_t* device) {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C5);
     SysCtlPeripheralReset(SYSCTL_PERIPH_I2C5);
@@ -40,9 +53,16 @@ void i2c_init(i2cDevice_t* device) {
     device->base = I2C5_BASE;
 }
 
+/**
+ * @brief Writes given amount of data to specific register of i2c device.
+ *
+ * @param device handler of the i2c device
+ * @param addr i2c addres of device
+ * @param reg target register of device
+ * @param data pointer to data to be written
+ * @param size amount of data to be written
+ */
 void i2c_write_reg(i2cDevice_t* device, uint8_t addr, uint8_t reg, uint8_t* data, uint8_t size) {
-    //assert(size > 0);
-
     I2CMasterSlaveAddrSet(device->base, addr, false);
     
     // Select reg we want to write to
@@ -64,6 +84,15 @@ void i2c_write_reg(i2cDevice_t* device, uint8_t addr, uint8_t reg, uint8_t* data
     i2c_busy_blocking(device);
 }
 
+/**
+ * @brief Reads given amount of data from specific register of i2c device.
+ *
+ * @param device handler of the i2c device
+ * @param addr i2c addres of device
+ * @param reg target register of device
+ * @param data pointer to memory
+ * @param size amount of data to be read
+ */
 void i2c_read_reg(i2cDevice_t* device, uint8_t addr, uint8_t reg, uint8_t* data, uint8_t size) {
     // Set mode to "write"
     I2CMasterSlaveAddrSet(device->base, addr, false);
@@ -98,12 +127,22 @@ void i2c_read_reg(i2cDevice_t* device, uint8_t addr, uint8_t reg, uint8_t* data,
     }
 }
 
+/**
+ * @brief Blocks until device is ready.
+ *
+ * @param device handler of the i2c device
+ */
 void i2c_busy_blocking(i2cDevice_t* device) {
     while(!I2CMasterBusy(device->base));
     while(I2CMasterBusy(device->base));
     i2c_check_error(device);
 }
 
+/**
+ * @brief Checks if i2c device is in an error state. If so block.
+ *
+ * @param device handler of the i2c device
+ */
 void i2c_check_error(i2cDevice_t* device) {
     if(I2CMasterErr(device->base) != I2C_MASTER_ERR_NONE) {
         GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2);

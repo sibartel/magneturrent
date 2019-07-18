@@ -60,13 +60,4 @@ void uart_interrupt_handler() {
     uint32_t ui32Status = UARTIntStatus(UART0_BASE, true);
 
     UARTIntClear(UART0_BASE, ui32Status);
-
-//    while(UARTCharsAvail(UART0_BASE))
-//    {
-//        //
-//        // Read the next character from the UART and write it back to the UART.
-//        //
-//        UARTCharPutNonBlocking(UART0_BASE,
-//                                   UARTCharGetNonBlocking(UART0_BASE));
-//    }
 }
